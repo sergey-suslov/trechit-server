@@ -1,10 +1,11 @@
 package main
 
 import (
+	"log"
+
 	godotenv "github.com/joho/godotenv"
 	db "github.com/sergey-suslov/trechit-server/internal/db"
 	routing "github.com/sergey-suslov/trechit-server/internal/routing"
-	"log"
 )
 
 func main() {

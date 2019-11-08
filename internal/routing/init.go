@@ -1,18 +1,15 @@
 package routing
 
 import (
-	gin "github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
+	v1 "github.com/sergey-suslov/trechit-server/internal/routing/api/v1"
 )
 
 // Init routing
 func Init() {
-	r := gin.Default()
+	e := echo.New()
+	apiv1 := e.Group("/v1")
+	v1.InitAPI(apiv1)
 
-	api := r.Group("/api")
-	public := r.Group("/api")
-
-	InitUsersControllerPrivate(api.Group("/users"))
-	InitUsersControllerPublic(public.Group("/users"))
-	
-	r.Run()
+	e.Logger.Fatal(e.Start(":1323"))
 }
