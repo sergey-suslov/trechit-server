@@ -1,10 +1,10 @@
 package db
 
 import (
-	"os"
 	"context"
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/pgxpool"
+	"os"
 )
 
 // Pool of pgx connections
