@@ -4,8 +4,9 @@ import (
 	"log"
 
 	godotenv "github.com/joho/godotenv"
-	db "github.com/sergey-suslov/trechit-server/internal/db"
-	routing "github.com/sergey-suslov/trechit-server/internal/routing"
+	"github.com/sergey-suslov/trechit-server/internal/db"
+	"github.com/sergey-suslov/trechit-server/internal/routing"
+	"github.com/sergey-suslov/trechit-server/utils"
 )
 
 func main() {
@@ -17,5 +18,6 @@ func main() {
 	if err != nil {
 		log.Println("Couldn't connect to DB")
 	}
+	utils.InitValidator()
 	routing.Init()
 }

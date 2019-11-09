@@ -9,7 +9,7 @@ import (
 // Init routing
 func Init() {
 	e := echo.New()
-	
+
 	e.Use(middleware.Recover())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "☗ ${method} => ${uri} = ${status}\n",
