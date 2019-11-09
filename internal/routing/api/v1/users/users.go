@@ -25,7 +25,9 @@ func SignUp(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong credentials")
 	}
 
-	models.CreateUser(form.Email, form.Name, form.Password)
+	if err := models.CreateUser(form.Email, form.Name, form.Password); err != nil {
+	    return echo.NewHTTPError(http.StatusInternalServerError, "Error creating user")
+	}
 
 	return c.String(200, "")
 }
