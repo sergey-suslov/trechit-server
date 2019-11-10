@@ -48,12 +48,24 @@ func (user *User) GetJwt(experationTime time.Time) (*string, error) {
 	return &token, err
 }
 
-// CreateUser create user model and write it to the DB
-func CreateUser(email, name, password string) error {
-	salt := getSalt(80)
+// GenerateHash returns user password hash
+func GenerateHash(password, salt string) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(password + salt))
 	hash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	return hash
+}
+
+// GenerateHashWithRandomSalt returns user password hash with random salt
+func GenerateHashWithRandomSalt(password string) (string, string) {
+	salt := getSalt(80)
+	hash := GenerateHash(password, salt)
+	return hash, salt
+}
+
+// CreateUser create user model and write it to the DB
+func CreateUser(email, name, password string) error {
+	hash, salt := GenerateHashWithRandomSalt(password)
 
 	_, err := db.Pool.Exec(context.Background(), `
 		insert into users values(default, $1, $2, $3, $4, default);
@@ -98,8 +110,5 @@ func GetUserByEmail(email string) (*User, error) {
 
 // VerifyPassword compares user password and given password
 func VerifyPassword(user *User, password string) bool {
-	hasher := sha256.New()
-	hasher.Write([]byte(password + user.Salt))
-	hash := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
-	return user.Hash == hash
+	return user.Hash == GenerateHash(password, user.Salt)
 }
