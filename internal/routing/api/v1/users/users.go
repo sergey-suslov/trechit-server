@@ -1,7 +1,6 @@
 package users
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/sergey-suslov/trechit-server/internal/db/models"
 	"github.com/sergey-suslov/trechit-server/utils"
@@ -68,7 +67,7 @@ func Auth(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong email or password")
 	}
 
-	expirationTime := time.Now().Add(5 * time.Minute)
+	expirationTime := time.Now().Add(5 * 24 * time.Hour)
 
 	token, err := user.GetJwt(expirationTime)
 	if err != nil {
@@ -86,7 +85,33 @@ func Auth(e echo.Context) error {
 
 // GetProfile returns user model
 func GetProfile(e echo.Context) error {
-	token := e.Get("user").(*jwt.Token)
-	user := token.Claims.(*models.UserClaims)
+	user := e.Get("user").(*models.UserClaims)
 	return e.JSON(http.StatusOK, user)
+}
+
+// RefreshToken refresh user token
+func RefreshToken(e echo.Context) error {
+	userState := e.Get("user").(*models.UserClaims)
+	user, err := models.GetUserByEmail(userState.Email)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error refreshing token")
+	}
+	if user == nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "No user for this token")
+	}
+
+	expirationTime := time.Now().Add(5 * 24 * time.Hour)
+	token, err := user.GetJwt(expirationTime)
+
+	if token == nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error refreshing token")
+	}
+
+	e.SetCookie(&http.Cookie{
+		Name:    "token",
+		Value:   *token,
+		Expires: expirationTime,
+	})
+
+	return e.String(http.StatusOK, "")
 }

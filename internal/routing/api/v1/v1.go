@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/sergey-suslov/trechit-server/internal/db/models"
@@ -17,5 +18,14 @@ func InitAPI(e *echo.Group) {
 		TokenLookup: "cookie:token",
 		Claims:      &models.UserClaims{},
 	}))
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			token := c.Get("user").(*jwt.Token)
+			user := token.Claims.(*models.UserClaims)
+			c.Set("user", user)
+			return next(c)
+		}
+	})
 	e.GET("/profile", users.GetProfile)
+	e.POST("/refresh", users.RefreshToken)
 }
