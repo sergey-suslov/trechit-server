@@ -5,14 +5,24 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/sergey-suslov/trechit-server/internal/db/models"
+	"github.com/sergey-suslov/trechit-server/internal/routing/api/v1/socket"
 	"github.com/sergey-suslov/trechit-server/internal/routing/api/v1/users"
 	"os"
 )
 
 // InitAPI initialize api v1
 func InitAPI(e *echo.Group) {
+	socketGroup := e.Group("/socket")
+	socketGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningKey:  []byte(os.Getenv("JWT_SECRET")),
+		TokenLookup: "query:token",
+		Claims:      &models.UserClaims{},
+	}))
+	socketGroup.GET("", socket.InitSocketConn)
+
 	e.POST("/sign-up", users.SignUp)
 	e.POST("/sign-in", users.Auth)
+	e.GET("/socket", socket.InitSocketConn)
 	e.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey:  []byte(os.Getenv("JWT_SECRET")),
 		TokenLookup: "cookie:token",

@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4"
 	"github.com/sergey-suslov/trechit-server/internal/db"
 	"math/rand"
 	"os"

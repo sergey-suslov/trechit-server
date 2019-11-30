@@ -40,7 +40,7 @@ func SignUp(c echo.Context) error {
 	}
 
 	if err := models.CreateUser(form.Email, form.Name, form.Password); err != nil {
-	    return echo.NewHTTPError(http.StatusInternalServerError, "Error creating user")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Error creating user")
 	}
 
 	return c.String(200, "")
@@ -50,11 +50,11 @@ func SignUp(c echo.Context) error {
 func Auth(e echo.Context) error {
 	var form AuthUserForm
 	if err := e.Bind(&form); err != nil {
-	    return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
+		return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
 	}
 
 	if err := utils.Validate.Struct(form); err != nil {
-	    return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
+		return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
 	}
 
 	var user *models.User
@@ -80,7 +80,7 @@ func Auth(e echo.Context) error {
 		Expires: expirationTime,
 	})
 
-	return e.String(http.StatusOK, "")
+	return e.String(http.StatusOK, *token)
 }
 
 // GetProfile returns user model
@@ -113,5 +113,5 @@ func RefreshToken(e echo.Context) error {
 		Expires: expirationTime,
 	})
 
-	return e.String(http.StatusOK, "")
+	return e.String(http.StatusOK, *token)
 }
