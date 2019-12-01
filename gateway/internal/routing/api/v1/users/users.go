@@ -2,8 +2,8 @@ package users
 
 import (
 	"github.com/labstack/echo"
-	"github.com/sergey-suslov/trechit-server/internal/db/models"
-	"github.com/sergey-suslov/trechit-server/utils"
+	models2 "github.com/sergey-suslov/trechit-server/gateway/internal/db/models"
+	utils2 "github.com/sergey-suslov/trechit-server/gateway/utils"
 	"net/http"
 	"time"
 )
@@ -27,11 +27,11 @@ func SignUp(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong credentials")
 	}
 
-	if err := utils.Validate.Struct(form); err != nil {
+	if err := utils2.Validate.Struct(form); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong credentials")
 	}
 
-	existingUser, err := models.GetUserByEmail(form.Email)
+	existingUser, err := models2.GetUserByEmail(form.Email)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Error signing up")
 	}
@@ -39,7 +39,7 @@ func SignUp(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Email already exists")
 	}
 
-	if err := models.CreateUser(form.Email, form.Name, form.Password); err != nil {
+	if err := models2.CreateUser(form.Email, form.Name, form.Password); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Error creating user")
 	}
 
@@ -53,17 +53,17 @@ func Auth(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
 	}
 
-	if err := utils.Validate.Struct(form); err != nil {
+	if err := utils2.Validate.Struct(form); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong body")
 	}
 
-	var user *models.User
-	user, err := models.GetUserByEmail(form.Email)
+	var user *models2.User
+	user, err := models2.GetUserByEmail(form.Email)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Error getting user")
 	}
 
-	if user == nil || !models.VerifyPassword(user, form.Password) {
+	if user == nil || !models2.VerifyPassword(user, form.Password) {
 		return echo.NewHTTPError(http.StatusBadRequest, "Wrong email or password")
 	}
 
@@ -85,14 +85,14 @@ func Auth(e echo.Context) error {
 
 // GetProfile returns user model
 func GetProfile(e echo.Context) error {
-	user := e.Get("user").(*models.UserClaims)
+	user := e.Get("user").(*models2.UserClaims)
 	return e.JSON(http.StatusOK, user)
 }
 
 // RefreshToken refresh user token
 func RefreshToken(e echo.Context) error {
-	userState := e.Get("user").(*models.UserClaims)
-	user, err := models.GetUserByEmail(userState.Email)
+	userState := e.Get("user").(*models2.UserClaims)
+	user, err := models2.GetUserByEmail(userState.Email)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Error refreshing token")
 	}

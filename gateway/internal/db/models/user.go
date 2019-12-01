@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jackc/pgx/v4"
-	"github.com/sergey-suslov/trechit-server/internal/db"
+	"github.com/sergey-suslov/trechit-server/gateway/internal/db"
 	"math/rand"
 	"os"
 	"time"

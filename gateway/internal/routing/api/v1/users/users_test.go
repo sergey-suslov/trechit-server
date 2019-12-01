@@ -1,13 +1,13 @@
 package users
 
 import (
-	"github.com/sergey-suslov/trechit-server/internal/db/models"
+	models2 "github.com/sergey-suslov/trechit-server/gateway/internal/db/models"
 	"testing"
 )
 
-func generateUserModel(password, salt string) *models.User {
-	hash, salt := models.GenerateHashWithRandomSalt(password)
-	user := &models.User{
+func generateUserModel(password, salt string) *models2.User {
+	hash, salt := models2.GenerateHashWithRandomSalt(password)
+	user := &models2.User{
 		Id:    1,
 		Name:  "Test",
 		Email: "Email",
@@ -23,12 +23,12 @@ func TestVerifyPassword(t *testing.T) {
 	user := generateUserModel(pass, salt)
 
 	t.Run("Passwords match", func(t *testing.T) {
-		if !models.VerifyPassword(user, pass) {
+		if !models2.VerifyPassword(user, pass) {
 			t.Error("Passwords match, should return true")
 		}
 	})
 	t.Run("Passwords do not match", func(t *testing.T) {
-		if models.VerifyPassword(user, pass + "1") {
+		if models2.VerifyPassword(user, pass+"1") {
 			t.Error("Passwords do not match, should return false")
 		}
 	})

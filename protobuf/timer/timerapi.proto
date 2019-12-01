@@ -1,0 +1,36 @@
+syntax = "proto3";
+package timer;
+
+import "google/protobuf/timestamp.proto";
+
+message TimeSpan {
+  int32 id = 1;
+  int32 userId = 2;
+  google.protobuf.Timestamp startTime = 3;
+  google.protobuf.Timestamp stopTime = 4;
+  google.protobuf.Timestamp createdAt = 5;
+}
+
+service Timer {
+  rpc StartTimer (StartTimerRequest) returns (StartTimerResponse) {}
+  rpc StopTimer (StopTimerRequest) returns (StopTimerResponse) {}
+}
+
+message StartTimerRequest {
+  int32 userId = 1;
+  google.protobuf.Timestamp startTime = 2;
+}
+
+message StartTimerResponse {
+  TimeSpan timeSpan = 1;
+}
+
+message StopTimerRequest {
+  int32 userId = 1;
+  google.protobuf.Timestamp stopTime = 2;
+  int32 timeSpanId = 3;
+}
+
+message StopTimerResponse {
+  int32 timeSpanId = 3;
+}

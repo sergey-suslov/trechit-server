@@ -4,9 +4,9 @@ import (
 	"log"
 
 	godotenv "github.com/joho/godotenv"
-	"github.com/sergey-suslov/trechit-server/internal/db"
-	"github.com/sergey-suslov/trechit-server/internal/routing"
-	"github.com/sergey-suslov/trechit-server/utils"
+	"github.com/sergey-suslov/trechit-server/gateway/internal/db"
+	"github.com/sergey-suslov/trechit-server/gateway/internal/routing"
+	"github.com/sergey-suslov/trechit-server/gateway/utils"
 )
 
 func main() {

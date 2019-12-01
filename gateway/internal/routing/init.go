@@ -3,7 +3,7 @@ package routing
 import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	v1 "github.com/sergey-suslov/trechit-server/internal/routing/api/v1"
+	v12 "github.com/sergey-suslov/trechit-server/gateway/internal/routing/api/v1"
 )
 
 // Init routing
@@ -16,7 +16,7 @@ func Init() {
 	}))
 
 	apiv1 := e.Group("/v1")
-	v1.InitAPI(apiv1)
+	v12.InitAPI(apiv1)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
