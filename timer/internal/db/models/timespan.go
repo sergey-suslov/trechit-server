@@ -18,6 +18,18 @@ type TimeSpan struct {
 	CreatedAt *time.Time
 }
 
+func GetTimeSpanById(id int32) (*TimeSpan, error) {
+	var timeSpan TimeSpan
+	err := db.Pool.QueryRow(context.Background(), `
+		select id, userid, starttime, stoptime, created from timespans where id=$1;
+	`, id).Scan(&timeSpan.Id, &timeSpan.UserId, &timeSpan.StartTime, &timeSpan.StopTime, &timeSpan.CreatedAt)
+	if err != nil {
+		log.Println("Error searching for time span", err)
+		return nil, err
+	}
+	return &timeSpan, nil
+}
+
 func StartTimer(userId int32, startTime *time.Time) (*TimeSpan, error) {
 	var timeSpan TimeSpan
 	err := db.Pool.QueryRow(context.Background(), `
@@ -27,8 +39,19 @@ func StartTimer(userId int32, startTime *time.Time) (*TimeSpan, error) {
 		log.Println("Error creating time span", err)
 		return nil, err
 	}
-
 	return &timeSpan, nil
+}
+
+func StopTimer(timespanId int32, stopTime *time.Time) error {
+	log.Println(" Stoptime", stopTime.Unix())
+	_, err := db.Pool.Exec(context.Background(), `
+		update timespans set stoptime=$1 where id=$2
+	`, *stopTime, timespanId)
+	if err != nil {
+		log.Println("Error setting stoptime in time span", err)
+		return err
+	}
+	return nil
 }
 
 func (timeSpan *TimeSpan) ToProtoTimeSpan() (*timer.TimeSpan, error) {

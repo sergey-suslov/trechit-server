@@ -28,6 +28,16 @@ func (TimerService) StartTimer(context context.Context, request *timer.StartTime
 	}, nil
 }
 
-func (TimerService) StopTimer(context.Context, *timer.StopTimerRequest) (*timer.StopTimerResponse, error) {
-	panic("implement me StopTimer")
+func (TimerService) StopTimer(context context.Context, request *timer.StopTimerRequest) (*timer.StopTimerResponse, error) {
+	stopTime, err := ptypes.Timestamp(request.GetStopTime())
+	if err != nil {
+		return nil, err
+	}
+	err = models.StopTimer(request.GetTimeSpanId(), &stopTime)
+	if err != nil {
+		return nil, err
+	}
+	return &timer.StopTimerResponse{
+		TimeSpanId: request.GetTimeSpanId(),
+	}, nil
 }
