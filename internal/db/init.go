@@ -2,8 +2,7 @@ package db
 
 import (
 	"context"
-	"github.com/jackc/pgx"
-	"github.com/jackc/pgx/pgxpool"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"os"
 )
 
@@ -17,15 +16,6 @@ func getConnectionString() string {
 	port := os.Getenv("DATABASE_PORT")
 	database := os.Getenv("DATABASE_NAME")
 	return "postgresql://" + username + ":" + password + "@" + host + ":" + port + "/" + database
-}
-
-// GetConnection Get connection to DB
-func GetConnection() (*pgx.Conn, error) {
-	conn, err := pgx.Connect(context.Background(), getConnectionString())
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
 }
 
 // GetPool returns pgxpool of connections
